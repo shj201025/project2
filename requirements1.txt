@@ -1,0 +1,57 @@
+import streamlit as st
+import random
+
+st.set_page_config(page_title="가위바위보", page_icon="✊")
+
+# 상태 초기화
+if "user" not in st.session_state:
+    st.session_state.user = 0
+if "com" not in st.session_state:
+    st.session_state.com = 0
+if "round" not in st.session_state:
+    st.session_state.round = 1
+if "game_over" not in st.session_state:
+    st.session_state.game_over = False
+
+choices = ["가위", "바위", "보"]
+
+st.title("✊✋✌️ 가위바위보 (BO3)")
+
+st.write(f"라운드: {st.session_state.round}")
+st.write(f"나: {st.session_state.user} / 컴퓨터: {st.session_state.com}")
+
+if st.session_state.game_over:
+    st.warning("게임 끝!")
+    if st.button("다시 시작"):
+        st.session_state.user = 0
+        st.session_state.com = 0
+        st.session_state.round = 1
+        st.session_state.game_over = False
+    st.stop()
+
+user = st.radio("선택", choices, horizontal=True)
+
+if st.button("플레이"):
+    com = random.choice(choices)
+
+    st.write("너:", user)
+    st.write("컴:", com)
+
+    if user == com:
+        st.info("무승부")
+
+    elif (
+        (user == "가위" and com == "보") or
+        (user == "바위" and com == "가위") or
+        (user == "보" and com == "바위")
+    ):
+        st.success("너 승!")
+        st.session_state.user += 1
+    else:
+        st.error("컴 승!")
+        st.session_state.com += 1
+
+    st.session_state.round += 1
+
+    if st.session_state.user == 2 or st.session_state.com == 2:
+        st.session_state.game_over = True
